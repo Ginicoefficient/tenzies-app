@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import "./App.css";
+import Die from "./Components/die";
+import { nanoid } from "nanoid";
 
 function App() {
-  const [count, setCount] = useState(0)
+  function allNewDice() {
+    const diceArray = new Array(10).fill().map((index) => {
+      return {
+        value: Math.floor(Math.random() * 6 + 1),
+        isHeld: false,
+        id: nanoid(),
+      };
+    });
+    return diceArray;
+  }
+
+  const [currentDice, setDice] = React.useState(allNewDice());
+
+  const diceElements = currentDice.map((dice) => (
+    <Die
+      key={dice.id}
+      value={dice.value}
+      id={dice.id}
+      isHeld={dice.isHeld}
+      holdDice={() => holdDice(dice.id)}
+    />
+  ));
+
+  function handleNewRoll() {
+    setDice(() => allNewDice());
+  }
+
+  function holdDice(id) {
+    console.log(id);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="app-container">
+      <main>
+        <div className="dice-container">{diceElements}</div>
+        <button className="btn" onClick={handleNewRoll}>
+          Roll
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
